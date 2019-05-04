@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language id="eex" _name="Embedded Elixir (eex)" version="2.0" _section="Markup">
+  <metadata>
+    <property name="mimetypes">text/eex</property>
+    <property name="globs">*(?&lt;!text).eex</property>
+  </metadata>
+
+  <styles>
+    <style id="tag"         _name="EEx tag: &lt;%"         map-to="xml:cdata-delim"/>
+    <style id="output"      _name="EEx output tag_ &lt;%=" map-to="eex:tag"/>
+    <style id="comment"     _name="EEx comment: &lt;%#"    map-to="xml:comment"/>
+  </styles>
+
+  <definitions>
+    <context id="block-comment" style-ref="comment">
+      <start>&lt;%#</start>
+      <end>-?%&gt;</end>
+      <include>
+        <context ref="def:in-comment"/>
+      </include>
+    </context>
+
+    <context id="block-output" class="no-spell-check">
+      <start>&lt;%=</start>
+      <end>-?%&gt;</end>
+      <include>
+        <context where="start" sub-pattern="0" style-ref="output"/>
+        <context where="end"   sub-pattern="0" style-ref="output"/>
+        <context ref="elixir-code"/>
+      </include>
+    </context>
+
+    <context id="block" class="no-spell-check">
+      <start>&lt;%</start>
+      <end>-?%&gt;</end>
+      <include>
+        <context where="start" sub-pattern="0" style-ref="tag"/>
+        <context where="end"   sub-pattern="0" style-ref="tag"/>
+        <context ref="elixir-code"/>
+      </include>
+    </context>
+
+    <context id="elixir-code" extend-parent="false"><!-- extend false -->
+      <start></start><end>$^</end><!-- everything -->
+      <include>
+        <context ref="elixir:elixir"/>
+      </include>
+    </context>
+
+    <context id="eex">
+      <include>
+        <context ref="block-comment"/>
+        <context ref="block-output"/>
+        <context ref="block"/>
+      </include>
+    </context>
+
+  </definitions>
+</language>
